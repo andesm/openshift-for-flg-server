@@ -1,0 +1,1216 @@
+apiVersion: v2
+items:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: postgres
+    name: postgres
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        openshift.io/imported-from: postgres
+      from:
+        kind: DockerImage
+        name: postgres:10
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: postgres
+    name: postgres
+  spec:
+    replicas: 1
+    selector:
+      app: postgres
+      deploymentconfig: postgres
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: postgres
+          deploymentconfig: postgres
+      spec:
+        containers:
+        - image: postgres
+          name: postgres
+          ports:
+          - containerPort: 5432
+            protocol: TCP
+          resources: {}
+          env:
+          - name: POSTGRES_PASSWORD
+            value: postgres
+          volumeMounts:
+          - name: nfs-share
+            mountPath: /var/lib/postgresql/data
+            subPath: openshift/db/postgres
+        volumes:
+        - name: nfs-share
+          persistentVolumeClaim:
+            claimName: nfs-pvc
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - postgres
+        from:
+          kind: ImageStreamTag
+          name: postgres:latest
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: postgres
+    name: postgres
+  spec:
+    ports:
+    - name: 5432-tcp
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
+    selector:
+      app: postgres
+      deploymentconfig: postgres
+  status:
+    loadBalancer: {}
+kind: List
+metadata: {}
+---
+apiVersion: v1
+items:
+- apiVersion: v1
+  generation: 0
+  image:
+    dockerImageLayers: null
+    dockerImageMetadata:
+      ContainerConfig: {}
+      Created: null
+      Id: ""
+      apiVersion: "1.0"
+      kind: DockerImage
+    dockerImageMetadataVersion: "1.0"
+    metadata:
+      creationTimestamp: null
+  kind: ImageStreamTag
+  lookupPolicy:
+    local: false
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+      openshift.io/imported-from: docker-registry.default.svc:5000/openshift/mariadb:10.2
+    creationTimestamp: null
+    labels:
+      app: mariadb
+    name: mariadb:10.2
+  tag:
+    annotations: null
+    from:
+      kind: DockerImage
+      name: docker-registry.default.svc:5000/openshift/mariadb:10.2
+    generation: null
+    importPolicy: {}
+    name: "10.2"
+    referencePolicy:
+      type: ""
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: mariadb
+    name: mariadb
+  spec:
+    replicas: 1
+    selector:
+      app: mariadb
+      deploymentconfig: mariadb
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: mariadb
+          deploymentconfig: mariadb
+      spec:
+        containers:
+        - image: docker-registry.default.svc:5000/openshift/mariadb:10.2
+          name: mariadb
+          ports:
+          - containerPort: 3306
+            protocol: TCP
+          resources: {}
+          env:
+          - name: MYSQL_USER
+            value: mariadb
+          - name: MYSQL_PASSWORD
+            value: mariadb
+          - name: MYSQL_ROOT_PASSWORD
+            value: mariadb
+          volumeMounts:
+          - name: nfs-share
+            mountPath: /var/lib/mysql/data
+            subPath: openshift/db/mariadb
+        volumes:
+        - name: nfs-share
+          persistentVolumeClaim:
+            claimName: nfs-pvc
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - mariadb
+        from:
+          kind: ImageStreamTag
+          name: mariadb:10.2
+          namespace: openshift
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: mariadb
+    name: mariadb
+  spec:
+    ports:
+    - name: 3306-tcp
+      port: 3306
+      protocol: TCP
+      targetPort: 3306
+    selector:
+      app: mariadb
+      deploymentconfig: mariadb
+  status:
+    loadBalancer: {}
+kind: List
+metadata: {}
+---
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: wordpress-flg
+    name: wordpress
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        openshift.io/imported-from: wordpress
+      from:
+        kind: DockerImage
+        name: wordpress
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: wordpress-flg
+    name: wordpress-flg
+  spec:
+    lookupPolicy:
+      local: false
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: wordpress-flg
+    name: wordpress-flg
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: wordpress-flg:latest
+    postCommit: {}
+    resources: {}
+    source:
+      contextDir: wordpress-flg
+      git:
+        uri: https://github.com/andesm/openshift-for-flg-server.git
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: wordpress:latest
+      type: Docker
+    triggers:
+    - github:
+        secret: 65uhARXlNL_r41CfHejt
+      type: GitHub
+    - generic:
+        secret: 3D-ocAyXtp4esiWM4ndS
+      type: Generic
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: wordpress-flg
+    name: wordpress-flg
+  spec:
+    replicas: 1
+    selector:
+      app: wordpress-flg
+      deploymentconfig: wordpress-flg
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: wordpress-flg
+          deploymentconfig: wordpress-flg
+      spec:
+        containers:
+        - image: wordpress-flg:latest
+          name: wordpress-flg
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          resources: {}
+          env:
+          - name: WORDPRESS_DB_HOST
+            value: mariadb
+          - name: WORDPRESS_DB_NAME
+            value: wordpress_flg
+          - name: WORDPRESS_DB_PASSWORD
+            value: mariadb
+          volumeMounts:
+          - name: nfs-share
+            mountPath: /var/www/html
+            subPath: openshift/srv/wordpress/flg
+        volumes:
+        - name: nfs-share
+          persistentVolumeClaim:
+            claimName: nfs-pvc
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - wordpress-flg
+        from:
+          kind: ImageStreamTag
+          name: wordpress-flg:latest
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: wordpress-flg
+    name: wordpress-flg
+  spec:
+    ports:
+    - name: 80-tcp
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app: wordpress-flg
+      deploymentconfig: wordpress-flg
+  status:
+    loadBalancer: {}
+kind: List
+metadata: {}
+---
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: wordpress-lily
+    name: wordpress-lily
+  spec:
+    lookupPolicy:
+      local: false
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: wordpress-lily
+    name: wordpress-lily
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: wordpress-lily:latest
+    postCommit: {}
+    resources: {}
+    source:
+      contextDir: wordpress-lily
+      git:
+        uri: https://github.com/andesm/openshift-for-flg-server.git
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: wordpress:latest
+      type: Docker
+    triggers:
+    - github:
+        secret: HDHrU0g6NT0AwO6mQFfp
+      type: GitHub
+    - generic:
+        secret: f8DVH5sPYurV49eWeuqV
+      type: Generic
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: wordpress-lily
+    name: wordpress-lily
+  spec:
+    replicas: 1
+    selector:
+      app: wordpress-lily
+      deploymentconfig: wordpress-lily
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: wordpress-lily
+          deploymentconfig: wordpress-lily
+      spec:
+        containers:
+        - image: wordpress-lily:latest
+          name: wordpress-lily
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          resources: {}
+          env:
+          - name: WORDPRESS_DB_HOST
+            value: mariadb
+          - name: WORDPRESS_DB_NAME
+            value: wordpress_lily
+          - name: WORDPRESS_DB_PASSWORD
+            value: mariadb
+          volumeMounts:
+          - name: nfs-share
+            mountPath: /var/www/html
+            subPath: openshift/srv/wordpress/lily
+        volumes:
+        - name: nfs-share
+          persistentVolumeClaim:
+            claimName: nfs-pvc
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - wordpress-lily
+        from:
+          kind: ImageStreamTag
+          name: wordpress-lily:latest
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: wordpress-lily
+    name: wordpress-lily
+  spec:
+    ports:
+    - name: 80-tcp
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app: wordpress-lily
+      deploymentconfig: wordpress-lily
+  status:
+    loadBalancer: {}
+kind: List
+metadata: {}
+---
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: nextcloud-flg
+    name: nextcloud
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        openshift.io/imported-from: nextcloud:12
+      from:
+        kind: DockerImage
+        name: nextcloud:12
+      generation: null
+      importPolicy: {}
+      name: "12"
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: nextcloud-flg
+    name: nextcloud-flg
+  spec:
+    lookupPolicy:
+      local: false
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: nextcloud-flg
+    name: nextcloud-flg
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: nextcloud-flg:latest
+    postCommit: {}
+    resources: {}
+    source:
+      contextDir: nextcloud
+      git:
+        uri: https://github.com/andesm/openshift-for-flg-server
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: nextcloud:12
+      type: Docker
+    triggers:
+    - github:
+        secret: c7_OibK302C9l50Hy7ZQ
+      type: GitHub
+    - generic:
+        secret: mZExfkjuKWTLHlg-UolX
+      type: Generic
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: nextcloud-flg
+    name: nextcloud-flg
+  spec:
+    replicas: 1
+    selector:
+      app: nextcloud-flg
+      deploymentconfig: nextcloud-flg
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: nextcloud-flg
+          deploymentconfig: nextcloud-flg
+      spec:
+        containers:
+        - image: nextcloud-flg:latest
+          name: nextcloud-flg
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          resources: {}
+          env:
+          volumeMounts:
+          - name: nfs-share
+            mountPath: /var/www/html
+            subPath: openshift/srv/nextcloud
+        volumes:
+        - name: nfs-share
+          persistentVolumeClaim:
+            claimName: nfs-pvc
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - nextcloud-flg
+        from:
+          kind: ImageStreamTag
+          name: nextcloud-flg:latest
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: nextcloud-flg
+    name: nextcloud-flg
+  spec:
+    ports:
+    - name: 80-tcp
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app: nextcloud-flg
+      deploymentconfig: nextcloud-flg
+  status:
+    loadBalancer: {}
+kind: List
+metadata: {}
+---
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: zabbix-web
+    name: zabbix-web-apache-pgsql
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        openshift.io/imported-from: zabbix/zabbix-web-apache-pgsql:ubuntu-trunk
+      from:
+        kind: DockerImage
+        name: zabbix/zabbix-web-apache-pgsql:ubuntu-trunk
+      generation: null
+      importPolicy: {}
+      name: ubuntu-trunk
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  generation: 0
+  image:
+    dockerImageLayers: null
+    dockerImageMetadata:
+      ContainerConfig: {}
+      Created: null
+      Id: ""
+      apiVersion: "1.0"
+      kind: DockerImage
+    dockerImageMetadataVersion: "1.0"
+    metadata:
+      creationTimestamp: null
+  kind: ImageStreamTag
+  lookupPolicy:
+    local: false
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+      openshift.io/imported-from: zabbix-web:latest
+    creationTimestamp: null
+    labels:
+      app: zabbix-web
+    name: zabbix-web:latest
+  tag:
+    annotations: null
+    from:
+      kind: DockerImage
+      name: zabbix-web:latest
+    generation: null
+    importPolicy: {}
+    name: latest
+    referencePolicy:
+      type: ""
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: zabbix-web
+    name: zabbix-web
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: zabbix-web:latest
+    postCommit: {}
+    resources: {}
+    source:
+      contextDir: zabbix-web
+      git:
+        uri: https://github.com/andesm/openshift-for-flg-server.git
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: zabbix-web-apache-pgsql:ubuntu-trunk
+      type: Docker
+    triggers:
+    - github:
+        secret: nCh_U77ivwjDfi3CF4V_
+      type: GitHub
+    - generic:
+        secret: cCMsodYbSop8lgr_ectH
+      type: Generic
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: zabbix-web
+    name: zabbix-web
+  spec:
+    replicas: 1
+    selector:
+      app: zabbix-web
+      deploymentconfig: zabbix-web
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: zabbix-web
+          deploymentconfig: zabbix-web
+      spec:
+        containers:
+        - image: zabbix-web:latest
+          name: zabbix-web
+          ports:
+          - containerPort: 443
+            protocol: TCP
+          - containerPort: 80
+            protocol: TCP
+          resources: {}
+          env:
+          - name: DB_SERVER_HOST
+            value: postgres
+          - name: POSTGRES_USER
+            value: postgres
+          - name: POSTGRES_PASSWORD
+            value: postgres
+          - name: POSTGRES_DB
+            value: zabbix
+          - name: ZBX_SERVER_HOST
+            value: zabbix-server
+          - name: TZ
+            value: Asia/Tokyo
+          volumeMounts:
+          - mountPath: /etc/ssl/apache2
+            name: zabbix-web-volume-1
+        volumes:
+        - emptyDir: {}
+          name: zabbix-web-volume-1
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - zabbix-web
+        from:
+          kind: ImageStreamTag
+          name: zabbix-web:latest
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: zabbix-web
+    name: zabbix-web
+  spec:
+    ports:
+    - name: 80-tcp
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    - name: 443-tcp
+      port: 443
+      protocol: TCP
+      targetPort: 443
+    selector:
+      app: zabbix-web
+      deploymentconfig: zabbix-web
+  status:
+    loadBalancer: {}
+kind: List
+metadata: {}
+---
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: zabbix-server
+    name: zabbix-server
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        openshift.io/imported-from: zabbix/zabbix-server-pgsql:alpine-trunk
+      from:
+        kind: DockerImage
+        name: zabbix/zabbix-server-pgsql:alpine-trunk
+      generation: null
+      importPolicy: {}
+      name: alpine-trunk
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: zabbix-server
+    name: zabbix-server
+  spec:
+    replicas: 1
+    selector:
+      app: zabbix-server
+      deploymentconfig: zabbix-server
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: zabbix-server
+          deploymentconfig: zabbix-server
+      spec:
+        containers:
+        - image: zabbix/zabbix-server-pgsql:alpine-trunk
+          name: zabbix-server
+          ports:
+          - containerPort: 10051
+            protocol: TCP
+          resources: {}
+          env:
+          - name: DB_SERVER_HOST
+            value: postgres
+          - name: POSTGRES_USER
+            value: postgres
+          - name: POSTGRES_PASSWORD
+            value: postgres
+          - name: POSTGRES_DB
+            value: zabbix
+          volumeMounts:
+          - mountPath: /usr/lib/zabbix/externalscripts
+            name: zabbix-server-volume-1
+          - mountPath: /var/lib/zabbix/mibs
+            name: zabbix-server-volume-2
+          - mountPath: /var/lib/zabbix/snmptraps
+            name: zabbix-server-volume-3
+          - mountPath: /var/lib/zabbix/ssl/keys
+            name: zabbix-server-volume-4
+          - mountPath: /usr/lib/zabbix/alertscripts
+            name: zabbix-server-volume-5
+          - mountPath: /var/lib/zabbix/ssl/ssl_ca
+            name: zabbix-server-volume-6
+          - mountPath: /var/lib/zabbix/enc
+            name: zabbix-server-volume-7
+          - mountPath: /var/lib/zabbix/modules
+            name: zabbix-server-volume-8
+          - mountPath: /var/lib/zabbix/ssh_keys
+            name: zabbix-server-volume-9
+          - mountPath: /var/lib/zabbix/ssl/certs
+            name: zabbix-server-volume-10
+        volumes:
+        - emptyDir: {}
+          name: zabbix-server-volume-1
+        - emptyDir: {}
+          name: zabbix-server-volume-2
+        - emptyDir: {}
+          name: zabbix-server-volume-3
+        - emptyDir: {}
+          name: zabbix-server-volume-4
+        - emptyDir: {}
+          name: zabbix-server-volume-5
+        - emptyDir: {}
+          name: zabbix-server-volume-6
+        - emptyDir: {}
+          name: zabbix-server-volume-7
+        - emptyDir: {}
+          name: zabbix-server-volume-8
+        - emptyDir: {}
+          name: zabbix-server-volume-9
+        - emptyDir: {}
+          name: zabbix-server-volume-10
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - zabbix-server
+        from:
+          kind: ImageStreamTag
+          name: zabbix-server:alpine-trunk
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: zabbix-server
+    name: zabbix-server
+  spec:
+    ports:
+    - name: 10051-tcp
+      port: 10051
+      protocol: TCP
+      targetPort: 10051
+    selector:
+      app: zabbix-server
+      deploymentconfig: zabbix-server
+  status:
+    loadBalancer: {}
+kind: List
+metadata: {}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  creationTimestamp: '2018-07-14T06:43:57Z'
+  labels:
+    app: wordpress-lily
+  name: wordpress-lily
+  namespace: flg
+  resourceVersion: '211784'
+  selfLink: /apis/route.openshift.io/v1/namespaces/flg/routes/wordpress-lily
+  uid: 488c9106-8731-11e8-a003-000c29e709e7
+spec:
+  host: flg.jp
+  path: /lily
+  port:
+    targetPort: 80-tcp
+  to:
+    kind: Service
+    name: wordpress-lily
+    weight: 100
+  wildcardPolicy: None
+status:
+  ingress:
+    - conditions:
+        - lastTransitionTime: '2018-07-14T06:43:57Z'
+          status: 'True'
+          type: Admitted
+      host: flg.jp
+      routerName: router
+      wildcardPolicy: None
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  creationTimestamp: '2018-07-14T14:39:04Z'
+  labels:
+    app: nextcloud-flg
+  name: nextcloud-flg
+  namespace: flg
+  resourceVersion: '274681'
+  selfLink: /apis/route.openshift.io/v1/namespaces/flg/routes/nextcloud-flg
+  uid: a83eac32-8773-11e8-a003-000c29e709e7
+spec:
+  host: flg.jp
+  path: /nextcloud
+  port:
+    targetPort: 80-tcp
+  to:
+    kind: Service
+    name: nextcloud-flg
+    weight: 100
+  wildcardPolicy: None
+status:
+  ingress:
+    - conditions:
+        - lastTransitionTime: '2018-07-14T14:39:04Z'
+          status: 'True'
+          type: Admitted
+      host: flg.jp
+      routerName: router
+      wildcardPolicy: None
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  creationTimestamp: '2018-07-14T17:29:01Z'
+  labels:
+    app: wordpress-flg
+  name: wordpress-flg
+  namespace: flg
+  resourceVersion: '296677'
+  selfLink: /apis/route.openshift.io/v1/namespaces/flg/routes/wordpress-flg
+  uid: 65bc789e-878b-11e8-a003-000c29e709e7
+spec:
+  host: flg.jp
+  path: /flg
+  port:
+    targetPort: 80-tcp
+  to:
+    kind: Service
+    name: wordpress-flg
+    weight: 100
+  wildcardPolicy: None
+status:
+  ingress:
+    - conditions:
+        - lastTransitionTime: '2018-07-14T17:29:01Z'
+          status: 'True'
+          type: Admitted
+      host: flg.jp
+      routerName: router
+      wildcardPolicy: None
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  creationTimestamp: '2018-07-14T17:31:56Z'
+  labels:
+    app: zabbix-web
+  name: zabbix-web
+  namespace: flg
+  resourceVersion: '297582'
+  selfLink: /apis/route.openshift.io/v1/namespaces/flg/routes/zabbix-web
+  uid: cdfdea8a-878b-11e8-a003-000c29e709e7
+spec:
+  host: flg.jp
+  path: /zabbix
+  port:
+    targetPort: 80-tcp
+  to:
+    kind: Service
+    name: zabbix-web
+    weight: 100
+  wildcardPolicy: None
+status:
+  ingress:
+    - conditions:
+        - lastTransitionTime: '2018-07-14T17:31:56Z'
+          status: 'True'
+          type: Admitted
+      host: flg.jp
+      routerName: router
+      wildcardPolicy: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  creationTimestamp: '2018-07-14T20:34:03Z'
+  labels:
+    app: zabbix-server
+  name: zabbix-server-nodeport
+  namespace: flg
+  resourceVersion: '328368'
+  selfLink: /api/v1/namespaces/flg/services/zabbix-server-nodeport
+  uid: 3f32bd68-87a5-11e8-a003-000c29e709e7
+spec:
+  clusterIP: 172.30.216.238
+  externalTrafficPolicy: Cluster
+  ports:
+    - name: 10051-tcp
+      nodePort: 30051
+      port: 10051
+      protocol: TCP
+      targetPort: 10051
+  selector:
+    app: zabbix-server
+    deploymentconfig: zabbix-server
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}
+---
