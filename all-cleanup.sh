@@ -3,5 +3,5 @@
 ./delete.sh
 ./prune.sh
 ./create.sh
-./scaledown.sh
-./scaleup.sh
+#./scaledown.sh
+#./scaleup.sh
