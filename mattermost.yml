@@ -7,7 +7,7 @@ items:
       openshift.io/generated-by: OpenShiftNewApp
     creationTimestamp: null
     labels:
-      app: mattermost-prod-app
+      app: mattermost-flg
     name: mattermost-prod-app
   spec:
     lookupPolicy:
@@ -25,6 +25,60 @@ items:
         type: ""
   status:
     dockerImageRepository: ""
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: mattermost-flg
+    name: mattermost-flg
+  spec:
+    lookupPolicy:
+      local: false
+  status:
+    dockerImageRepository: ""
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: mattermost-flg
+    name: mattermost-flg
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: mattermost-flg:latest
+    postCommit: {}
+    resources: {}
+    source:
+      contextDir: mattermost
+      git:
+        uri: https://github.com/andesm/openshift-for-flg-server
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: mattermost-prod-app:latest
+      type: Docker
+    triggers:
+    - github:
+        secret: hBkzFObeLPuaCNHJoWN7
+      type: GitHub
+    - generic:
+        secret: YH2Vt0h1gqZ_HS1jWAiH
+      type: Generic
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+  status:
+    lastVersion: 0
 - apiVersion: apps.openshift.io/v1
   kind: DeploymentConfig
   metadata:
@@ -32,13 +86,13 @@ items:
       openshift.io/generated-by: OpenShiftNewApp
     creationTimestamp: null
     labels:
-      app: mattermost-prod-app
-    name: mattermost-prod-app
+      app: mattermost-flg
+    name: mattermost-flg
   spec:
     replicas: 1
     selector:
-      app: mattermost-prod-app
-      deploymentconfig: mattermost-prod-app
+      app: mattermost-flg
+      deploymentconfig: mattermost-flg
     strategy:
       resources: {}
     template:
@@ -47,12 +101,12 @@ items:
           openshift.io/generated-by: OpenShiftNewApp
         creationTimestamp: null
         labels:
-          app: mattermost-prod-app
-          deploymentconfig: mattermost-prod-app
+          app: mattermost-flg
+          deploymentconfig: mattermost-flg
       spec:
         containers:
-        - image: mattermost/mattermost-prod-app
-          name: mattermost-prod-app
+        - image: mattermost-flg:latest
+          name: mattermost-flg
           ports:
           - containerPort: 8000
             protocol: TCP
@@ -66,38 +120,40 @@ items:
             value: postgres
           - name: MM_PASSWORD
             value: postgres
+          - name: MM_CONFIG
+            value: /config
           volumeMounts:
-          - mountPath: /mattermost/config
-            name: mattermost-prod-app-volume-1
-          - mountPath: /mattermost/data
-            name: mattermost-prod-app-volume-2
-          - mountPath: /mattermost/logs
-            name: mattermost-prod-app-volume-3
           - mountPath: /mattermost/plugins
-            name: mattermost-prod-app-volume-4
+            name: mattermost-flg-volume-1
           - mountPath: /mattermost/client/plugins
-            name: mattermost-prod-app-volume-5
+            name: mattermost-flg-volume-2
+          - mountPath: /mattermost/config
+            name: mattermost-flg-volume-3
+          - mountPath: /mattermost/data
+            name: mattermost-flg-volume-4
+          - mountPath: /mattermost/logs
+            name: mattermost-flg-volume-5
         volumes:
         - emptyDir: {}
-          name: mattermost-prod-app-volume-1
+          name: mattermost-flg-volume-1
         - emptyDir: {}
-          name: mattermost-prod-app-volume-2
+          name: mattermost-flg-volume-2
         - emptyDir: {}
-          name: mattermost-prod-app-volume-3
+          name: mattermost-flg-volume-3
         - emptyDir: {}
-          name: mattermost-prod-app-volume-4
+          name: mattermost-flg-volume-4
         - emptyDir: {}
-          name: mattermost-prod-app-volume-5
+          name: mattermost-flg-volume-5
     test: false
     triggers:
     - type: ConfigChange
     - imageChangeParams:
         automatic: true
         containerNames:
-        - mattermost-prod-app
+        - mattermost-flg
         from:
           kind: ImageStreamTag
-          name: mattermost-prod-app:latest
+          name: mattermost-flg:latest
       type: ImageChange
   status:
     availableReplicas: 0
@@ -113,8 +169,8 @@ items:
       openshift.io/generated-by: OpenShiftNewApp
     creationTimestamp: null
     labels:
-      app: mattermost-prod-app
-    name: mattermost-prod-app
+      app: mattermost-flg
+    name: mattermost-flg
   spec:
     ports:
     - name: 8000-tcp
@@ -122,8 +178,8 @@ items:
       protocol: TCP
       targetPort: 8000
     selector:
-      app: mattermost-prod-app
-      deploymentconfig: mattermost-prod-app
+      app: mattermost-flg
+      deploymentconfig: mattermost-flg
   status:
     loadBalancer: {}
 kind: List

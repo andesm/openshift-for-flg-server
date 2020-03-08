@@ -1,0 +1,9 @@
+          env:
+          - name: DB_HOST
+            value: postgres
+          - name: MM_DBNAME
+            value: mattermost
+          - name: MM_USERNAME
+            value: postgres
+          - name: MM_PASSWORD
+            value: postgres

@@ -1,0 +1,20 @@
+          volumeMounts:
+          - name: nfs-share
+            mountPath: /mattermost/plugins
+            subPath: openshift/srv/mattermost/plugins
+          - name: nfs-share
+            mountPath: /mattermost/client/plugins
+            subPath: openshift/srv/mattermost/client/plugins
+          - name: nfs-share
+            mountPath: /mattermost/client/config
+            subPath: openshift/srv/mattermost/config
+          - name: nfs-share
+            mountPath: /mattermost/data
+            subPath: openshift/srv/mattermost/data
+          - name: nfs-share
+            mountPath: /mattermost/logs
+            subPath: openshift/srv/mattermost/logs
+        volumes:
+        - name: nfs-share
+          persistentVolumeClaim:
+            claimName: flg-pvc
