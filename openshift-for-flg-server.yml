@@ -110,6 +110,35 @@ kind: List
 metadata: {}
 ---
 apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  creationTimestamp: '2018-07-14T20:34:03Z'
+  labels:
+    app: postgres
+  name: postgres-nodeport
+  namespace: flg
+  resourceVersion: '328368'
+  selfLink: /api/v1/namespaces/flg/services/mongo-nodeport
+  uid: 3f32bd68-87a5-11e8-a003-000c29e709e7
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+    - name: 5432-tcp
+      nodePort: 30032
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
+  selector:
+    app: postgres
+    deploymentconfig: postgres
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
 items:
 - apiVersion: v1
   generation: 0
